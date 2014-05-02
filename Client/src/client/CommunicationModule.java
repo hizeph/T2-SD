@@ -2,6 +2,7 @@
 package client;
 
 import java.net.InetAddress;
+import java.lang.reflect.Method;
 
 
 public class CommunicationModule {
@@ -9,10 +10,10 @@ public class CommunicationModule {
     int messageType;
     int requestId;
     RemoteObjectRef objectRef;
-    int methodId;
+    Method methodId;
     byte[] args;
     
-    public byte[] doOperation(RemoteObjectRef o, int methodId, byte[] arguments){
+    public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments){
         /* 
         * Chama host especificado pelo RemoteObjetcRef
         * Bloqueia esperando resposta
@@ -30,5 +31,16 @@ public class CommunicationModule {
     public void sendReply(byte[] reply, InetAddress clientHost, int clientPort){
         
     }
-
+    
+/*   public byte[] toByte(){
+        
+    }
+    
+    public CommunicationModule toObject(byte[] b){
+       int i = b[0 -> Integer.size]
+       int i2 = b[Integer.size+1 -> Integer.size]
+       return new CommunicationModule(i,i2....)
+    }
+*/
+    
 }
