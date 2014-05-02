@@ -7,17 +7,21 @@
 package client;
 
 import java.net.InetAddress;
+import java.lang.reflect.Method;
 
-/**
- *
- * @author Hizeph
- */
+
 public class RemoteObjectRef {
     
     private InetAddress ip;
     private int port;
     private double time;
     private int objectNumber;
-    //Interface of remote object - wtf?
+
+    public RemoteObjectRef(){
+        
+    }
+    
+    //Interface of remote object - ??
+    
     
 }

@@ -6,10 +6,6 @@
 
 package server;
 
-/**
- *
- * @author Hizeph
- */
 public class Server {
 
     /**
