@@ -15,7 +15,7 @@ public class CommunicationModule {
     
     public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments){
         /* 
-        * Chama host especificado pelo RemoteObjetcRef
+        * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
         * Bloqueia esperando resposta
         *  
         */
