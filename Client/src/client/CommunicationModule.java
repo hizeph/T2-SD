@@ -1,4 +1,3 @@
- 
 package client;
 
 import java.io.ByteArrayInputStream;
@@ -12,46 +11,43 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class CommunicationModule {
-    
+
     private int messageType;
     private int requestId;
     private RemoteObjectRef objectRef;
     private int methodId;
     private byte[] args;
-    // testezinhos
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-     
-     public CommunicationModule(){
-         
-     }
-        
-    public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments){
+
+    public CommunicationModule() {
+
+    }
+
+    public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments) {
         /* 
-        * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
-        * Bloqueia esperando resposta
-        *  
-        */
-        
+         * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
+         * Bloqueia esperando resposta
+         *  
+         */
+
         // datagramPacket(toByte());
         // readDatagramPacket(b);
         // this = toObject(b)
         byte[] b = new byte[1];
         return b;
     }
-    
-    public byte[] getRequest(){
+
+    public byte[] getRequest() {
         byte[] b = new byte[1];
         return b;
     }
-    
-    public void sendReply(byte[] reply, InetAddress clientHost, int clientPort){
-        
+
+    public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) {
+
     }
-    
-   public byte[] toByte(){
-      ObjectOutputStream os = null;
+
+    public byte[] toByte() {
+        ObjectOutputStream os = null;
         try {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             os = new ObjectOutputStream(byteStream);
@@ -61,7 +57,7 @@ public class CommunicationModule {
             return byteStream.toByteArray();
         } catch (IOException ex) {
             Logger.getLogger(RemoteObjectRef.class.getName()).log(Level.SEVERE, null, ex);
-        } finally{
+        } finally {
             try {
                 os.close();
             } catch (IOException ex) {
@@ -70,14 +66,14 @@ public class CommunicationModule {
         }
         return null;
     }
-    
-    public CommunicationModule toObject(byte[] b){
-       ObjectInputStream os = null;
+
+    public CommunicationModule toObject(byte[] b) {
+        ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
             os = new ObjectInputStream(byteStream);
             return (CommunicationModule) os.readObject();
-            
+
         } catch (IOException ex) {
             Logger.getLogger(RemoteObjectRef.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -92,5 +88,4 @@ public class CommunicationModule {
         return null;
     }
 
-    
 }

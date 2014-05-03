@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.lang.reflect.Method;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +18,8 @@ class RemoteObjInterface implements Serializable {
     protected String[] methodName;
     protected Class<?>[][] args;
     
-    public RemoteObjInterface(Method[] methods){
+    public RemoteObjInterface(Object obj){
+        Method[] methods = obj.getClass().getMethods();
         int size = methods.length;
         methodName = new String[size];
         args = new Class<?>[size][];
@@ -25,14 +27,14 @@ class RemoteObjInterface implements Serializable {
         for(Method m : methods){
             methodName[i] = m.getName();
             args[i] = m.getParameterTypes();
+            i++;
         }
     }
     
-    protected Object runMethod(Object obj, int i){
+    protected Method getMethod(Object obj, int methodNumber){
         try {
-            Method m = obj.getClass().getMethod(methodName[i], args[i]);
-            
-            
+            Method m = obj.getClass().getMethod(methodName[methodNumber], args[methodNumber]);
+            return m;
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(RemoteObjInterface.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SecurityException ex) {
@@ -48,20 +50,28 @@ public class RemoteObjectRef implements Serializable {
     
     private InetAddress ip;
     private int port;
-    private double time;
+    private long time;
     private int objectNumber;
-    private RemoteObjInterface remoteInterface;
+    public RemoteObjInterface remoteInterface;
     
     public RemoteObjectRef(){
         
     }
 
-    public RemoteObjectRef(InetAddress ip, int port, double time, int objectNumber, RemoteObjInterface remoteInterface){
-        this.ip = ip;
+    public RemoteObjectRef(String host, int port, long time, int objectNumber, Object remoteInterface) throws UnknownHostException{
+        this.ip = InetAddress.getByName(host);
         this.port = port;
         this.time = time;
         this.objectNumber = objectNumber;
-        this.remoteInterface = remoteInterface;
+        this.remoteInterface = new RemoteObjInterface(remoteInterface);
+    }
+    
+    public Method getMethod(Object obj, int methodNumber){
+        return remoteInterface.getMethod(obj, methodNumber);
+    }
+    
+    public int getObjNumber(){
+        return objectNumber;
     }
    
     

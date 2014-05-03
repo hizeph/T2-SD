@@ -9,6 +9,7 @@ public class Client {
     public static void main(String[] args) {
         RemoteObjectRef obj = new RemoteObjectRef();
         
+        
     }
     
 }
