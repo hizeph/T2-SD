@@ -38,12 +38,13 @@ public class CommunicationModule {
     }
 
     public byte[] getRequest() {
+        /* não vai ser utilizado no cliente */
         byte[] b = new byte[1];
         return b;
     }
 
     public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) {
-
+        /* não é utilizado no cliente também */
     }
 
     public byte[] toByte() {

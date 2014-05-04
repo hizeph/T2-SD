@@ -18,20 +18,30 @@ public class CommunicationModule {
     private RemoteObjectRef objectRef;
     private int methodId;
     private byte[] args;
-
+    
     public CommunicationModule() {
-
+    }
+    
+    public RemoteObjectRef getObjectRef(){
+        return objectRef;
+    }
+    
+    public int getMethodId(){
+        return methodId;
+    }
+    
+    public byte[] getArgs(){
+        return args;
     }
 
     public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments) {
         /* 
          * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
          * Bloqueia esperando resposta
-         *  
          */
 
         // datagramPacket(toByte());
-        // readDatagramPacket(b);
+        
         // this = toObject(b)
         byte[] b = new byte[1];
         return b;
@@ -39,6 +49,7 @@ public class CommunicationModule {
 
     public byte[] getRequest() {
         byte[] b = new byte[1];
+        // readDatagramPacket(b);
         return b;
     }
 
@@ -67,7 +78,7 @@ public class CommunicationModule {
         return null;
     }
 
-    public CommunicationModule toObject(byte[] b) {
+    public CommunicationModule toCommunicationModule(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
