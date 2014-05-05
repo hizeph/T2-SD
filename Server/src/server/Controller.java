@@ -55,8 +55,8 @@ public class Controller {
             bufferIn = packet.getData();
             Message request = new Message();
 
-            request = request.toCommunicationModule(bufferIn);
-            this.runMethod(request.getObjectRef(), request.getMethodId(), request.getArgs());
+            Message request2 = request.toMessage(bufferIn);
+            this.runMethod(request2.getObjectRef(), request2.getMethodId(), request2.getArgs());
 
         } catch (SocketException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);

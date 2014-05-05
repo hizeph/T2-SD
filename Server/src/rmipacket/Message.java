@@ -47,7 +47,15 @@ public class Message implements Serializable {
         this.methodId = methodId;
         this.args = arguments;
 
-        return this.toByte();
+        byte[] buffer = new byte[9000];
+        buffer = this.toByte();
+        
+        DatagramSocket datagramSocket = new DatagramSocket();
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, objectRef.getAddress(), objectRef.getPort());
+        
+        datagramSocket.send(packet);
+        datagramSocket.close();
+        return buffer;
 
     }
 
@@ -89,7 +97,7 @@ public class Message implements Serializable {
         return null;
     }
 
-    public Message toCommunicationModule(byte[] b) {
+    public Message toMessage(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);

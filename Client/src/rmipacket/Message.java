@@ -46,24 +46,18 @@ public class Message implements Serializable {
         this.objectRef = o;
         this.methodId = methodId;
         this.args = arguments;
-
+        
+        
         byte[] buffer = new byte[9000];
         buffer = this.toByte();
-
+        
         DatagramSocket datagramSocket = new DatagramSocket();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, objectRef.getAddress(), objectRef.getPort());
-
+        
         datagramSocket.send(packet);
         datagramSocket.close();
+        return buffer;
 
-        byte[] bufferIn = new byte[9000];
-        packet = new DatagramPacket(bufferIn, bufferIn.length);
-
-        datagramSocket = new DatagramSocket();
-        datagramSocket.receive(packet);
-        bufferIn = packet.getData();
-        
-        return bufferIn;
     }
 
     public byte[] getRequest() {
@@ -72,6 +66,16 @@ public class Message implements Serializable {
         return b;
     }
 
+    public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) throws SocketException, IOException {
+        
+        DatagramPacket reply_double = new DatagramPacket(
+                reply, reply.length, clientHost, clientPort);
+            DatagramSocket datagramSocket = new DatagramSocket(clientPort);
+            datagramSocket.send(reply_double);
+            datagramSocket.close();
+    }
+
+    
 
     public byte[] toByte() {
         ObjectOutputStream os = null;
@@ -94,7 +98,7 @@ public class Message implements Serializable {
         return null;
     }
 
-    public Message toCommunicationModule(byte[] b) {
+    public Message toMessage(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
