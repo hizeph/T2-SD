@@ -1,50 +1,86 @@
 package rmipacket;
 
+import client.Controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
+import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Message {
+public class Message implements Serializable {
 
     private int messageType;
-    private int requestId;
+    static private int requestId = 0;
     private RemoteObjectRef objectRef;
     private int methodId;
     private byte[] args;
-    
-    public Message() {
+
+    public Message(RemoteObjectRef o, int methodId, byte[] arguments) {
+        this.requestId++;
+        this.messageType = 0;
+        this.objectRef = o;
+        this.methodId = methodId;
+        this.args = arguments;
     }
-    
-    public RemoteObjectRef getObjectRef(){
+
+    public RemoteObjectRef getObjectRef() {
         return objectRef;
     }
-    
-    public int getMethodId(){
+
+    public int getMethodId() {
         return methodId;
     }
-    
-    public byte[] getArgs(){
+
+    public byte[] getArgs() {
         return args;
     }
 
-    public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments) {
+    public byte[] doOperation() throws IOException {
         /* 
          * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
          * Bloqueia esperando resposta
          */
+        byte[] buffer = this.toByte();
+        InetAddress address = InetAddress.getByName("localhost");
 
+        DatagramPacket remoteObject = new DatagramPacket(
+                buffer, buffer.length, address, 2020);
+
+        try {
+            DatagramSocket datagramSocket = new DatagramSocket();
+            datagramSocket.send(remoteObject);
+
+            System.out.println("aguardando...");
+            //aguarda resposta
+
+            byte[] bufferIn = new byte[1000];
+            DatagramPacket packet = new DatagramPacket(bufferIn, bufferIn.length);
+
+            datagramSocket.receive(packet);
+
+            System.out.println("Resposta");
+            System.out.println("Tamanho packet: " + packet.getLength());
+            byte[] answare = packet.getData();
+            return answare;
+        } catch (SocketException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        return this.toByte();
         // datagramPacket(toByte());
-        
         // this = toObject(b)
-        byte[] b = new byte[1];
-        return b;
+//        byte[] b = new byte[1];
+//        return b;
+        return buffer;
     }
 
     public byte[] getRequest() {

@@ -22,8 +22,6 @@ public class Controller {
 
     public Controller() {
         objList = new ArrayList<Object>(20);
-
-        communication = new Message();
     }
 
     public void run() throws SocketException, IOException {
@@ -45,18 +43,38 @@ public class Controller {
 
         System.out.println("Recebido objeto");
 
-        
         String[] methodName = remoteObject.getRemoteInterface().getMethodsName();
         System.out.println("Argumentos: ");
 
         for (String c : methodName) {
             System.out.println("\t" + c);
         }
-        
-        
+
         Scanner sc = new Scanner(System.in);
         System.out.println("Digite o metodo que deseja utilizar");
-        String pedido = sc.nextLine();
+        String requestMethod = sc.nextLine();
+        int i;
+        for (i = 0; i < methodName.length; i++) {
+            if (requestMethod.equals(methodName[i])) {
+                break;
+            }
+        }
+        System.out.println("Numero do metodo: " + i);
+        Double n1, n2;
+        System.out.println("Digite o primeiro numero");
+        n1 = sc.nextDouble();
+        System.out.println("Digite o segundo numero");
+        n2 = sc.nextDouble();
 
+        byte[] byteArgs;
+
+        byteArgs = new byte[Double.SIZE * 2];
+        String s = Double.toString(n1);
+        s += "," + Double.toString(n2);
+        System.out.println(s);
+        byteArgs = s.getBytes();
+
+        communication = new Message(remoteObject, i, byteArgs);
+        communication.doOperation();
     }
 }

@@ -37,25 +37,36 @@ public class Controller {
         long time = Calendar.getInstance().getTimeInMillis();
         RemoteObjectRef ref = new RemoteObjectRef("localhost", 2020, time, objList.size() - 1, objList.get(objList.size() - 1));
 
-        byte[] buffer = ref.toByte();
-        
-        System.out.println("Tamanho ror: "+ buffer.length);
-        InetAddress address = InetAddress.getByName("localhost");
+        byte[] bufferOut = ref.toByte();
 
+        System.out.println("Tamanho ror: " + bufferOut.length);
+        InetAddress address = InetAddress.getByName("localhost");
+//  envia objeto remoto
         DatagramPacket remoteObject = new DatagramPacket(
-                buffer, buffer.length, address, 2020);
-        
+                bufferOut, bufferOut.length, address, 2020);
+
         try {
             DatagramSocket datagramSocket = new DatagramSocket();
             datagramSocket.send(remoteObject);
+            System.out.println("Aguardando pedido do cliente");
+            byte[] bufferIn = new byte[1000];
+            DatagramPacket packet = new DatagramPacket(bufferIn, bufferIn.length);
+
+            datagramSocket.receive(packet);
+            bufferIn = packet.getData();
+            Message request = new Message();
+
+            request = request.toCommunicationModule(bufferIn);
+            this.runMethod(request.getObjectRef(), request.getMethodId(), request.getArgs());
+
         } catch (SocketException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+//      aguarda algum cliente requisitar um metodo.
+
 //        RemoteObjectRef ror = ref.toRemoteObjectRef(buffer);
 //        
 //        System.out.println(ror.getObjNumber());
-
         // byte[] b = communication.getRequest()
         // communication = communication.toCommunicationModule(b);
         // runMethod(communication.getObjectRef(), communication.getMethodId(), communication.getArgs());
@@ -64,6 +75,7 @@ public class Controller {
     }
 
     private void runMethod(RemoteObjectRef ref, int methodId, byte[] byteArgs) {
+        System.out.println("Run Method "+methodId);
         int i = 0;
         Method m = ref.getMethod(objList.get(ref.getObjNumber()), methodId);
 //        byte[] byteArgs;
