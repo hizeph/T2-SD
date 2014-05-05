@@ -1,5 +1,6 @@
-package server;
+package classeRmi;
 
+import client.RemoteObjectRef;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -11,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CommunicationModule {
+public class Message {
 
     private int messageType;
     private int requestId;
@@ -19,7 +20,7 @@ public class CommunicationModule {
     private int methodId;
     private byte[] args;
     
-    public CommunicationModule() {
+    public Message() {
     }
     
     public RemoteObjectRef getObjectRef(){
@@ -78,12 +79,12 @@ public class CommunicationModule {
         return null;
     }
 
-    public CommunicationModule toCommunicationModule(byte[] b) {
+    public Message toCommunicationModule(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
             os = new ObjectInputStream(byteStream);
-            return (CommunicationModule) os.readObject();
+            return (Message) os.readObject();
 
         } catch (IOException ex) {
             Logger.getLogger(RemoteObjectRef.class.getName()).log(Level.SEVERE, null, ex);

@@ -1,5 +1,5 @@
 
-package server;
+package classeRmi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

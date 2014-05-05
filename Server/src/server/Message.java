@@ -1,5 +1,6 @@
-package client;
+package server;
 
+import classeRmi.RemoteObjectRef;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -11,40 +12,50 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CommunicationModule {
+public class Message {
 
     private int messageType;
     private int requestId;
     private RemoteObjectRef objectRef;
     private int methodId;
     private byte[] args;
-
-    public CommunicationModule() {
-
+    
+    public Message() {
+    }
+    
+    public RemoteObjectRef getObjectRef(){
+        return objectRef;
+    }
+    
+    public int getMethodId(){
+        return methodId;
+    }
+    
+    public byte[] getArgs(){
+        return args;
     }
 
     public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments) {
         /* 
          * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
          * Bloqueia esperando resposta
-         *  
          */
 
         // datagramPacket(toByte());
-        // readDatagramPacket(b);
+        
         // this = toObject(b)
         byte[] b = new byte[1];
         return b;
     }
 
     public byte[] getRequest() {
-        /* não vai ser utilizado no cliente */
         byte[] b = new byte[1];
+        // readDatagramPacket(b);
         return b;
     }
 
     public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) {
-        /* não é utilizado no cliente também */
+
     }
 
     public byte[] toByte() {
@@ -68,12 +79,12 @@ public class CommunicationModule {
         return null;
     }
 
-    public CommunicationModule toObject(byte[] b) {
+    public Message toCommunicationModule(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
             os = new ObjectInputStream(byteStream);
-            return (CommunicationModule) os.readObject();
+            return (Message) os.readObject();
 
         } catch (IOException ex) {
             Logger.getLogger(RemoteObjectRef.class.getName()).log(Level.SEVERE, null, ex);
