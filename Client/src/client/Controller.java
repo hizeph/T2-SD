@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -78,6 +79,12 @@ public class Controller {
 
         communication = new Message();
         buffer = communication.doOperation(remoteObject, i, byteArgs);
+        double result = toDouble(buffer);
+        System.out.println("Resultado recebido: "+result);
         
+    }
+    
+    public double toDouble(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getDouble();
     }
 }

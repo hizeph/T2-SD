@@ -42,13 +42,13 @@ public class Message implements Serializable {
     }
 
     public byte[] doOperation(RemoteObjectRef o, int methodId, byte[] arguments) throws IOException {
- 
+
         this.objectRef = o;
         this.methodId = methodId;
         this.args = arguments;
-        
+
         return this.toByte();
-      
+
     }
 
     public byte[] getRequest() {
@@ -57,9 +57,16 @@ public class Message implements Serializable {
         return b;
     }
 
-    public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) {
-
+    public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) throws SocketException, IOException {
+        
+        DatagramPacket reply_double = new DatagramPacket(
+                reply, reply.length, clientHost, clientPort);
+            DatagramSocket datagramSocket = new DatagramSocket(clientPort);
+            datagramSocket.send(reply_double);
+            datagramSocket.close();
     }
+
+    
 
     public byte[] toByte() {
         ObjectOutputStream os = null;

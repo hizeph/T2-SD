@@ -61,7 +61,6 @@ public class Controller {
         } catch (SocketException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
-//      aguarda algum cliente requisitar um metodo.
 
 //        RemoteObjectRef ror = ref.toRemoteObjectRef(buffer);
 //        
@@ -73,8 +72,8 @@ public class Controller {
         //runMethod(ref, 0, communication.getArgs());
     }
 
-    private void runMethod(RemoteObjectRef ref, int methodId, byte[] byteArgs) {
-        System.out.println("Run Method "+methodId);
+    private void runMethod(RemoteObjectRef ref, int methodId, byte[] byteArgs) throws UnknownHostException, IOException {
+        System.out.println("Run Method " + methodId);
         int i = 0;
         Method m = ref.getMethod(objList.get(ref.getObjNumber()), methodId);
 //        byte[] byteArgs;
@@ -104,7 +103,13 @@ public class Controller {
             i++;
         }
         try {
+            double result;
             System.out.println(m.invoke(objList.get(ref.getObjNumber()), objArgs));
+            result = (double) m.invoke(objList.get(ref.getObjNumber()), objArgs);
+            byte[] msg_reply = toByteArray(result);
+            InetAddress address = InetAddress.getByName("localhost");
+
+            communication.sendReply(msg_reply, address, clientListenPort);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
