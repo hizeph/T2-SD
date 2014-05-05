@@ -19,6 +19,7 @@ public class Controller {
 
     private ArrayList<Object> objList;
     private Message communication;
+    private final int clientListenPort = 2020;
 
     public Controller() {
         objList = new ArrayList<Object>(20);
@@ -27,9 +28,9 @@ public class Controller {
     public void run() throws SocketException, IOException {
         System.out.println("Cliente rodando, aguardando referencia");
         /*recebe referencia do objeto remoto do servidor*/
-        DatagramSocket datagramSocket = new DatagramSocket(2020);
+        DatagramSocket datagramSocket = new DatagramSocket(clientListenPort);
 
-        byte[] buffer = new byte[1000];
+        byte[] buffer = new byte[9000];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
         datagramSocket.receive(packet);
@@ -40,6 +41,7 @@ public class Controller {
 
         RemoteObjectRef object = new RemoteObjectRef();
         RemoteObjectRef remoteObject = object.toRemoteObjectRef(ror);
+        
 
         System.out.println("Recebido objeto");
 
@@ -74,7 +76,8 @@ public class Controller {
         System.out.println(s);
         byteArgs = s.getBytes();
 
-        communication = new Message(remoteObject, i, byteArgs);
-        communication.doOperation();
+        communication = new Message();
+        buffer = communication.doOperation(remoteObject, i, byteArgs);
+        
     }
 }

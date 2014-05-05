@@ -1,50 +1,54 @@
 package rmipacket;
 
+import server.Controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
+import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Message {
+public class Message implements Serializable {
 
     private int messageType;
-    private int requestId;
+    static private int requestId = 0;
     private RemoteObjectRef objectRef;
     private int methodId;
     private byte[] args;
-    
+
     public Message() {
+        this.requestId++;
+        this.messageType = 0;
     }
-    
-    public RemoteObjectRef getObjectRef(){
+
+    public RemoteObjectRef getObjectRef() {
         return objectRef;
     }
-    
-    public int getMethodId(){
+
+    public int getMethodId() {
         return methodId;
     }
-    
-    public byte[] getArgs(){
+
+    public byte[] getArgs() {
         return args;
     }
 
-    public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments) {
-        /* 
-         * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
-         * Bloqueia esperando resposta
-         */
-
-        // datagramPacket(toByte());
+    public byte[] doOperation(RemoteObjectRef o, int methodId, byte[] arguments) throws IOException {
+ 
+        this.objectRef = o;
+        this.methodId = methodId;
+        this.args = arguments;
         
-        // this = toObject(b)
-        byte[] b = new byte[1];
-        return b;
+        return this.toByte();
+      
     }
 
     public byte[] getRequest() {

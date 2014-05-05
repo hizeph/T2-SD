@@ -45,6 +45,15 @@ public class RemoteObjectRef implements Serializable {
     public RemoteObjectInterface getRemoteInterface(){
         return remoteInterface;
     }
+    
+    public InetAddress getAddress() throws UnknownHostException{
+        return ip;
+    }
+    
+    public int getPort(){
+        return port;
+    }
+    
    
     
     public byte[] toByte(){

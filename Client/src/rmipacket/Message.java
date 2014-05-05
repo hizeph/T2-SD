@@ -24,12 +24,9 @@ public class Message implements Serializable {
     private int methodId;
     private byte[] args;
 
-    public Message(RemoteObjectRef o, int methodId, byte[] arguments) {
+    public Message() {
         this.requestId++;
         this.messageType = 0;
-        this.objectRef = o;
-        this.methodId = methodId;
-        this.args = arguments;
     }
 
     public RemoteObjectRef getObjectRef() {
@@ -44,42 +41,22 @@ public class Message implements Serializable {
         return args;
     }
 
-    public byte[] doOperation() throws IOException {
-        /* 
-         * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
-         * Bloqueia esperando resposta
-         */
-        byte[] buffer = this.toByte();
-        InetAddress address = InetAddress.getByName("localhost");
-
-        DatagramPacket remoteObject = new DatagramPacket(
-                buffer, buffer.length, address, 2020);
-
-        try {
-            DatagramSocket datagramSocket = new DatagramSocket();
-            datagramSocket.send(remoteObject);
-
-            System.out.println("aguardando...");
-            //aguarda resposta
-
-            byte[] bufferIn = new byte[1000];
-            DatagramPacket packet = new DatagramPacket(bufferIn, bufferIn.length);
-
-            datagramSocket.receive(packet);
-
-            System.out.println("Resposta");
-            System.out.println("Tamanho packet: " + packet.getLength());
-            byte[] answare = packet.getData();
-            return answare;
-        } catch (SocketException ex) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-//        return this.toByte();
-        // datagramPacket(toByte());
-        // this = toObject(b)
-//        byte[] b = new byte[1];
-//        return b;
+    public byte[] doOperation(RemoteObjectRef o, int methodId, byte[] arguments) throws IOException {
+ 
+        this.objectRef = o;
+        this.methodId = methodId;
+        this.args = arguments;
+        
+        
+        byte[] buffer = new byte[9000];
+        buffer = this.toByte();
+        
+        DatagramSocket datagramSocket = new DatagramSocket();
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, objectRef.getAddress(), objectRef.getPort());
+        
+        datagramSocket.send(packet);
+        datagramSocket.close();
+        
         return buffer;
     }
 

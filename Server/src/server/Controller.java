@@ -2,10 +2,7 @@ package server;
 
 import rmipacket.Message;
 import rmipacket.RemoteObjectRef;
-import static com.sun.org.apache.xml.internal.serialize.OutputFormat.Defaults.Encoding;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.DatagramPacket;
@@ -24,6 +21,8 @@ public class Controller {
     private ArrayList<Object> objList;
     private Calculator calc;
     private Message communication;
+    private final int serverListenPort = 2021;
+    private final int clientListenPort = 2020;
 
     public Controller() {
         objList = new ArrayList<Object>(20);
@@ -35,7 +34,7 @@ public class Controller {
     public void run() throws UnknownHostException, IOException {
         objList.add(calc);
         long time = Calendar.getInstance().getTimeInMillis();
-        RemoteObjectRef ref = new RemoteObjectRef("localhost", 2020, time, objList.size() - 1, objList.get(objList.size() - 1));
+        RemoteObjectRef ref = new RemoteObjectRef("localhost", serverListenPort, time, objList.size() - 1, objList.get(objList.size() - 1));
 
         byte[] bufferOut = ref.toByte();
 
@@ -43,13 +42,13 @@ public class Controller {
         InetAddress address = InetAddress.getByName("localhost");
 //  envia objeto remoto
         DatagramPacket remoteObject = new DatagramPacket(
-                bufferOut, bufferOut.length, address, 2020);
+                bufferOut, bufferOut.length, address, clientListenPort);
 
         try {
-            DatagramSocket datagramSocket = new DatagramSocket();
+            DatagramSocket datagramSocket = new DatagramSocket(serverListenPort);
             datagramSocket.send(remoteObject);
             System.out.println("Aguardando pedido do cliente");
-            byte[] bufferIn = new byte[1000];
+            byte[] bufferIn = new byte[9000];
             DatagramPacket packet = new DatagramPacket(bufferIn, bufferIn.length);
 
             datagramSocket.receive(packet);
