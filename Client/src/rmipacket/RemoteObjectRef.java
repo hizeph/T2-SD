@@ -54,8 +54,6 @@ public class RemoteObjectRef implements Serializable {
         return port;
     }
     
-   
-    
     public byte[] toByte(){
         ObjectOutputStream os = null;
         try {

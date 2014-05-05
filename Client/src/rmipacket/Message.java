@@ -41,49 +41,70 @@ public class Message implements Serializable {
         return args;
     }
 
-    public byte[] doOperation(RemoteObjectRef o, int methodId, byte[] arguments) throws IOException {
-
-        this.objectRef = o;
+    public byte[] doOperation(RemoteObjectRef remoteObj, int methodId, byte[] arguments) throws IOException {
+        this.objectRef = remoteObj;
         this.methodId = methodId;
         this.args = arguments;
         
-        
         byte[] buffer = new byte[9000];
-        buffer = this.toByte();
+        byte[] bufferIn = new byte[9000];
+        
+        buffer = toByte(this);
         
         DatagramSocket datagramSocket = new DatagramSocket();
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, objectRef.getAddress(), objectRef.getPort());
-        
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, remoteObj.getAddress(), remoteObj.getPort());
         datagramSocket.send(packet);
         datagramSocket.close();
-        return buffer;
-
+        
+        datagramSocket = new DatagramSocket(2020);
+       
+        packet = new DatagramPacket(bufferIn,buffer.length);
+        datagramSocket.receive(packet);
+        bufferIn = packet.getData();
+        datagramSocket.close();
+        
+        return bufferIn;
     }
 
     public byte[] getRequest() {
-        byte[] b = new byte[1];
-        // readDatagramPacket(b);
-        return b;
+        try {
+
+            DatagramSocket datagramSocket = new DatagramSocket(2021);
+            System.out.println("Aguardando pedido do cliente");
+            byte[] buffer = new byte[9000];
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+            datagramSocket.receive(packet);
+            buffer = packet.getData();
+            
+            datagramSocket.close();
+
+            return buffer;
+
+        } catch (SocketException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Message.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) throws SocketException, IOException {
         
-        DatagramPacket reply_double = new DatagramPacket(
+        DatagramPacket packet = new DatagramPacket(
                 reply, reply.length, clientHost, clientPort);
-            DatagramSocket datagramSocket = new DatagramSocket(clientPort);
-            datagramSocket.send(reply_double);
+            DatagramSocket datagramSocket = new DatagramSocket();
+            datagramSocket.send(packet);
             datagramSocket.close();
     }
 
-    
-
-    public byte[] toByte() {
+    public static byte[] toByte(Message m) {
         ObjectOutputStream os = null;
         try {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             os = new ObjectOutputStream(byteStream);
             os.flush();
-            os.writeObject(this);
+            os.writeObject(m);
             os.flush();
             return byteStream.toByteArray();
         } catch (IOException ex) {
@@ -98,7 +119,7 @@ public class Message implements Serializable {
         return null;
     }
 
-    public Message toMessage(byte[] b) {
+    public static Message toMessage(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
