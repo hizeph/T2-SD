@@ -1,6 +1,5 @@
-package classeRmi;
+package rmipacket;
 
-import client.RemoteObjectRef;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

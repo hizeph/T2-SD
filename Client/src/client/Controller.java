@@ -5,7 +5,9 @@
  */
 package client;
 
-import classeRmi.Message;
+import rmipacket.RemoteObjectRef;
+import rmipacket.Message;
+import rmipacket.RemoteObjectInterface;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -29,7 +31,7 @@ public class Controller {
         /*recebe referencia do objeto remoto do servidor*/
         DatagramSocket datagramSocket = new DatagramSocket(2020);
 
-        byte[] buffer = new byte[880];
+        byte[] buffer = new byte[1000];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
         datagramSocket.receive(packet);
@@ -39,17 +41,18 @@ public class Controller {
         System.out.println("Tamanho ror: " + ror.length);
 
         RemoteObjectRef object = new RemoteObjectRef();
-        object = object.toRemoteObjectRef(packet.getData());
+        RemoteObjectRef remoteObject = object.toRemoteObjectRef(ror);
 
-        System.out.println("/n Recebido objeto /n");
+        System.out.println("Recebido objeto");
 
-
-        String[] methodName = object.remoteInterface.methodName;
+        
+        String[] methodName = remoteObject.getRemoteInterface().getMethodsName();
         System.out.println("Argumentos: ");
 
         for (String c : methodName) {
-            System.out.println("/t " + c);
+            System.out.println("\t" + c);
         }
+        
         
         Scanner sc = new Scanner(System.in);
         System.out.println("Digite o metodo que deseja utilizar");

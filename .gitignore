@@ -215,3 +215,4 @@ pip-log.txt
 .mr.developer.cfg
 /Client/nbproject/private/
 /Server/nbproject/private/
+/myrmi/nbproject/private/

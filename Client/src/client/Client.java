@@ -1,6 +1,7 @@
 
 package client;
 
+import rmipacket.RemoteObjectRef;
 import java.io.IOException;
 
 public class Client {

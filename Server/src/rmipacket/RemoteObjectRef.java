@@ -1,64 +1,53 @@
-package server;
 
-import classeRmi.RemoteObjectRef;
+package rmipacket;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.lang.reflect.Method;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Message {
 
-    private int messageType;
-    private int requestId;
-    private RemoteObjectRef objectRef;
-    private int methodId;
-    private byte[] args;
+public class RemoteObjectRef implements Serializable {
     
-    public Message() {
-    }
+    private InetAddress ip;
+    private int port;
+    private long time;
+    private int objectNumber;
+    public RemoteObjectInterface remoteInterface;
     
-    public RemoteObjectRef getObjectRef(){
-        return objectRef;
-    }
-    
-    public int getMethodId(){
-        return methodId;
-    }
-    
-    public byte[] getArgs(){
-        return args;
-    }
-
-    public byte[] doOperation(RemoteObjectRef o, Method methodId, byte[] arguments) {
-        /* 
-         * Chama host especificado pelo RemoteObjetcRef - como o RemoteObjectRef recebe os dados do host?
-         * Bloqueia esperando resposta
-         */
-
-        // datagramPacket(toByte());
+    public RemoteObjectRef(){
         
-        // this = toObject(b)
-        byte[] b = new byte[1];
-        return b;
     }
 
-    public byte[] getRequest() {
-        byte[] b = new byte[1];
-        // readDatagramPacket(b);
-        return b;
+    public RemoteObjectRef(String host, int port, long time, int objectNumber, Object remoteInterface) throws UnknownHostException{
+        this.ip = InetAddress.getByName(host);
+        this.port = port;
+        this.time = time;
+        this.objectNumber = objectNumber;
+        this.remoteInterface = new RemoteObjectInterface(remoteInterface);
     }
-
-    public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) {
-
+    
+    public Method getMethod(Object obj, int methodNumber){
+        return remoteInterface.getMethod(obj, methodNumber);
     }
-
-    public byte[] toByte() {
+    
+    public int getObjNumber(){
+        return objectNumber;
+    }
+    
+    public RemoteObjectInterface getRemoteInterface(){
+        return remoteInterface;
+    }
+   
+    
+    public byte[] toByte(){
         ObjectOutputStream os = null;
         try {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -69,7 +58,7 @@ public class Message {
             return byteStream.toByteArray();
         } catch (IOException ex) {
             Logger.getLogger(RemoteObjectRef.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        } finally{
             try {
                 os.close();
             } catch (IOException ex) {
@@ -78,14 +67,14 @@ public class Message {
         }
         return null;
     }
-
-    public Message toCommunicationModule(byte[] b) {
+    
+    public RemoteObjectRef toRemoteObjectRef(byte[] b) {
         ObjectInputStream os = null;
         try {
             ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
             os = new ObjectInputStream(byteStream);
-            return (Message) os.readObject();
-
+            return (RemoteObjectRef) os.readObject();
+            
         } catch (IOException ex) {
             Logger.getLogger(RemoteObjectRef.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -98,6 +87,8 @@ public class Message {
             }
         }
         return null;
+        
     }
-
+    
+    
 }

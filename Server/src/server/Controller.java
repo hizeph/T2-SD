@@ -1,6 +1,7 @@
 package server;
 
-import classeRmi.RemoteObjectRef;
+import rmipacket.Message;
+import rmipacket.RemoteObjectRef;
 import static com.sun.org.apache.xml.internal.serialize.OutputFormat.Defaults.Encoding;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +51,10 @@ public class Controller {
         } catch (SocketException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+//        RemoteObjectRef ror = ref.toRemoteObjectRef(buffer);
+//        
+//        System.out.println(ror.getObjNumber());
 
         // byte[] b = communication.getRequest()
         // communication = communication.toCommunicationModule(b);
