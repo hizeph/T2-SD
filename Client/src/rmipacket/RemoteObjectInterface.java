@@ -32,7 +32,11 @@ public class RemoteObjectInterface implements Serializable {
     
     public Class<?> getReturnType(int id){
         return returnType[id];
-    } 
+    }
+    
+    public Class<?>[] getArgsType(int id){
+        return args[id];
+    }
     
     public Method getMethod(Object obj, int methodNumber){
         try {
