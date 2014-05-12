@@ -1,14 +1,11 @@
 package rmipacket;
 
-import server.Controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -24,9 +21,15 @@ public class Message implements Serializable {
     private int methodId;
     private byte[] args;
 
-    public Message() {
-        this.requestId++;
+    public Message(int requestId) {
+        // request
+        this.requestId = requestId;
         this.messageType = 0;
+    }
+
+    public Message() {
+        // reply
+        this.messageType = 1;
     }
 
     public RemoteObjectRef getObjectRef() {
@@ -41,30 +44,41 @@ public class Message implements Serializable {
         return args;
     }
 
+    /*
+    * Esse método é utilizado pelo usuário (cliente) que utiliza um objeto remoto 
+    * para invocar um método codificado por outro usuário (servidor)
+    * Os argumentos são empacotados no objeto Mensagem e serializados,
+    * então são enviados via UDP para o servidor e espera a resposta via UDP também.
+    */
     public byte[] doOperation(RemoteObjectRef remoteObj, int methodId, byte[] arguments) throws IOException {
         this.objectRef = remoteObj;
         this.methodId = methodId;
         this.args = arguments;
-        
+
         byte[] buffer = new byte[9000];
         byte[] bufferIn = new byte[9000];
-        
+
         buffer = toByte(this);
-        
+
         DatagramSocket datagramSocket = new DatagramSocket();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, remoteObj.getAddress(), remoteObj.getPort());
         datagramSocket.send(packet);
         datagramSocket.close();
-        
+
         datagramSocket = new DatagramSocket(2020);
-        packet = new DatagramPacket(bufferIn,bufferIn.length);
+
+        packet = new DatagramPacket(bufferIn, buffer.length);
         datagramSocket.receive(packet);
         bufferIn = packet.getData();
         datagramSocket.close();
-        
+
         return bufferIn;
     }
 
+    /*
+    * Este método é utilizado pelo servidor para receber um objeto Mensagem do cliente via UDP.
+    * Retorna o objeto Mensagem serializado enviado pelo cliente.
+    */
     public byte[] getRequest() {
         try {
 
@@ -75,26 +89,29 @@ public class Message implements Serializable {
 
             datagramSocket.receive(packet);
             buffer = packet.getData();
-            
+
             datagramSocket.close();
 
             return buffer;
 
         } catch (SocketException ex) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         } catch (IOException ex) {
             Logger.getLogger(Message.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
+    /*
+    * Este método é utilizado pelo servidor para enviar o retorno do método executado pra o cliente que o requisitou
+    */
     public void sendReply(byte[] reply, InetAddress clientHost, int clientPort) throws SocketException, IOException {
-        
+
         DatagramPacket packet = new DatagramPacket(
                 reply, reply.length, clientHost, clientPort);
-            DatagramSocket datagramSocket = new DatagramSocket();
-            datagramSocket.send(packet);
-            datagramSocket.close();
+        DatagramSocket datagramSocket = new DatagramSocket();
+        datagramSocket.send(packet);
+        datagramSocket.close();
     }
 
     public static byte[] toByte(Message m) {

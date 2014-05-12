@@ -1,7 +1,6 @@
 package server;
 
-import rmipacket.Message;
-import rmipacket.RemoteObjectRef;
+import rmipacket.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,30 +29,30 @@ public class Controller {
         objList.add(calc);
         message = new Message();
         buffer = new byte[9000];
-        
+
     }
-    
-   private void resetBuffer() {
+
+    private void resetBuffer() {
         buffer = new byte[9000];
     }
 
     private void sendRemoteRef() {
         try {
             // converter pra int/double (32 bits)
-            long time = Calendar.getInstance().getTimeInMillis();
+            float time = (float) Calendar.getInstance().getTimeInMillis();
             RemoteObjectRef ref = new RemoteObjectRef("localhost", serverListenPort, time, objList.size() - 1, objList.get(objList.size() - 1));
-            
+
             byte[] bufferOut = ref.toByte();
-            
+
             System.out.println("Tamanho ror: " + bufferOut.length);
             InetAddress address = InetAddress.getByName("localhost");
             DatagramPacket remoteObject = new DatagramPacket(
                     bufferOut, bufferOut.length, address, clientListenPort);
-            
+
             DatagramSocket datagramSocket = new DatagramSocket();
             datagramSocket.send(remoteObject);
             datagramSocket.close();
-            
+
         } catch (UnknownHostException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SocketException ex) {
@@ -64,11 +63,11 @@ public class Controller {
     }
 
     public void run() throws UnknownHostException, IOException {
-        
+
         sendRemoteRef();
-        
+
         Message request;
-        while (true){
+        while (true) {
             this.resetBuffer();
             buffer = message.getRequest();
 
@@ -101,13 +100,13 @@ public class Controller {
         }
         try {
             Object result;
-            result =  m.invoke(objList.get(ref.getObjNumber()), objArgs);
+            result = m.invoke(objList.get(ref.getObjNumber()), objArgs);
             byte[] reply = String.valueOf(result).getBytes();
-            
+
             InetAddress address = InetAddress.getByName("localhost");
 
             message.sendReply(reply, address, clientListenPort);
-            
+
         } catch (IllegalAccessException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {

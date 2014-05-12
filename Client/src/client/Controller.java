@@ -1,14 +1,13 @@
-
 package client;
 
-import rmipacket.RemoteObjectRef;
-import rmipacket.Message;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rmipacket.*;
 
 public class Controller {
 
@@ -62,13 +61,13 @@ public class Controller {
 
     public void start() {
         remoteObject = getRemoteRef();
-        
+
         String[] methodList;
         methodList = remoteObject.getRemoteInterface().getMethodsName();
         String list = "";
         String s;
         Class<?>[] c;
-        
+
         for (int i = 0; i < methodList.length; i++) {
             s = "";
             c = remoteObject.getRemoteInterface().getArgsType(i);
@@ -79,14 +78,14 @@ public class Controller {
                     s += ",";
                 }
             }
-            list += methodList[i] + "("+s+")" +" "+ remoteObject.getRemoteInterface().getReturnType(i).getSimpleName() + "\n";
+            list += methodList[i] + "(" + s + ")" + " " + remoteObject.getRemoteInterface().getReturnType(i).getSimpleName() + "\n";
         }
         view.showMethods(list);
-        
+
     }
 
     public String runRemote(String method, String args) {
-        
+
         Object answer = null;
         String reply;
 
@@ -94,8 +93,10 @@ public class Controller {
 
         try {
             byte[] byteArgs = args.getBytes();
-            
-            message = new Message();
+
+            int time = (int) Calendar.getInstance().getTimeInMillis();
+            message = new Message(time);
+
             buffer = message.doOperation(remoteObject, methodId, byteArgs);
             reply = new String(buffer);
 
