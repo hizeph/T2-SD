@@ -10,7 +10,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -31,6 +30,7 @@ public class Controller {
         objList.add(calc);
         message = new Message();
         buffer = new byte[9000];
+        
     }
     
    private void resetBuffer() {
@@ -71,7 +71,7 @@ public class Controller {
 
         Message request = Message.toMessage(buffer);
         
-        runMethod(request.getObjectRef(), request.getMethodId(), request.getArgs());
+        this.runMethod(request.getObjectRef(), request.getMethodId(), request.getArgs());
 
     }
 
