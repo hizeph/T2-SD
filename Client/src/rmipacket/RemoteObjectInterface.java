@@ -37,6 +37,16 @@ public class RemoteObjectInterface implements Serializable {
         return args[id];
     }
     
+    public int getMethodId(String method){
+        int methodId;
+        for (methodId = 0; methodId < methodName.length; methodId++) {
+            if (method.equals(methodName[methodId])) {
+                break;
+            }
+        }
+        return methodId;
+    }
+    
     public Method getMethod(Object obj, int methodNumber){
         try {
             Method m = obj.getClass().getMethod(methodName[methodNumber], args[methodNumber]);

@@ -3,12 +3,10 @@ package rmipacket;
 import client.Controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -24,9 +22,15 @@ public class Message implements Serializable {
     private int methodId;
     private byte[] args;
 
-    public Message() {
-        this.requestId++;
+    public Message(int requestId) {
+        // request
+        this.requestId = requestId;
         this.messageType = 0;
+    }
+    
+    public Message(){
+        // reply
+        this.messageType = 1;
     }
 
     public RemoteObjectRef getObjectRef() {

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package client;
 
 import rmipacket.RemoteObjectRef;
@@ -67,27 +63,26 @@ public class Controller {
     public void start() {
         remoteObject = getRemoteRef();
         
-        String methodList[] = remoteObject.getRemoteInterface().getMethodsName();
+        String[] methodList;
+        methodList = remoteObject.getRemoteInterface().getMethodsName();
         String list = "";
         String s;
         Class<?>[] c;
         
-        /* Se descomentar esse treco, o retorno do remoteObject.getRemoteInterface().getMethodsName() muda e as requisições não funcionam mais*/
-//        for (int i = 0; i < methodList.length; i++) {
-//            s = "";
-//            c = remoteObject.getRemoteInterface().getArgsType(i);
-//            int lenght = c.length;
-//            for (int j = 0; j < lenght; j++) {
-//                s += c[j].getSimpleName();
-//                if (j != lenght - 1) {
-//                    s += ",";
-//                }
-//            }
-//            methodList[i] += "("+s+")" +" "+ remoteObject.getRemoteInterface().getReturnType(i).getSimpleName();
-//            list += methodList[i] + "\n";
-//        }
-//
-//        view.showMethods(list);
+        for (int i = 0; i < methodList.length; i++) {
+            s = "";
+            c = remoteObject.getRemoteInterface().getArgsType(i);
+            int lenght = c.length;
+            for (int j = 0; j < lenght; j++) {
+                s += c[j].getSimpleName();
+                if (j != lenght - 1) {
+                    s += ",";
+                }
+            }
+            list += methodList[i] + "("+s+")" +" "+ remoteObject.getRemoteInterface().getReturnType(i).getSimpleName() + "\n";
+        }
+        view.showMethods(list);
+        
     }
 
     public String runRemote(String method, String args) {
@@ -95,22 +90,12 @@ public class Controller {
         Object answer = null;
         String reply;
 
-        String[] methodName = remoteObject.getRemoteInterface().getMethodsName();
-        for (String c : methodName) {
-            System.out.println("\t" + c);
-        }
-        
-        int methodId;
-        for (methodId = 0; methodId < methodName.length; methodId++) {
-            System.out.println(method +" "+ methodName[methodId]);
-            if (method.equals(methodName[methodId])) {
-                break;
-            }
-        }
+        int methodId = remoteObject.getRemoteInterface().getMethodId(method);
 
         try {
             byte[] byteArgs = args.getBytes();
             
+            message = new Message();
             buffer = message.doOperation(remoteObject, methodId, byteArgs);
             reply = new String(buffer);
 

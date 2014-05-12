@@ -67,12 +67,15 @@ public class Controller {
         
         sendRemoteRef();
         
-        buffer = message.getRequest();
+        Message request;
+        while (true){
+            this.resetBuffer();
+            buffer = message.getRequest();
 
-        Message request = Message.toMessage(buffer);
-        
-        this.runMethod(request.getObjectRef(), request.getMethodId(), request.getArgs());
+            request = Message.toMessage(buffer);
 
+            this.runMethod(request.getObjectRef(), request.getMethodId(), request.getArgs());
+        }
     }
 
     private void runMethod(RemoteObjectRef ref, int methodId, byte[] byteArgs) throws UnknownHostException, IOException {
