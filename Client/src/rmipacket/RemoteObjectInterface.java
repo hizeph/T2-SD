@@ -1,4 +1,3 @@
-
 package rmipacket;
 
 import java.io.Serializable;

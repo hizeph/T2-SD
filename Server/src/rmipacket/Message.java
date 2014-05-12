@@ -57,8 +57,7 @@ public class Message implements Serializable {
         datagramSocket.close();
         
         datagramSocket = new DatagramSocket(2020);
-       
-        packet = new DatagramPacket(bufferIn,buffer.length);
+        packet = new DatagramPacket(bufferIn,bufferIn.length);
         datagramSocket.receive(packet);
         bufferIn = packet.getData();
         datagramSocket.close();

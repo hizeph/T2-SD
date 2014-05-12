@@ -90,8 +90,8 @@ public class Controller {
 //            methodList[i] += "("+s+")" +" "+ remoteObject.getRemoteInterface().getReturnType(i).getSimpleName();
 //            list += methodList[i] + "\n";
 //        }
-
-        view.showMethods(list);
+//
+//        view.showMethods(list);
     }
 
     public String runRemote(String method, String args) {

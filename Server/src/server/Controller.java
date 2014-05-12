@@ -39,6 +39,7 @@ public class Controller {
 
     private void sendRemoteRef() {
         try {
+            // converter pra int/double (32 bits)
             long time = Calendar.getInstance().getTimeInMillis();
             RemoteObjectRef ref = new RemoteObjectRef("localhost", serverListenPort, time, objList.size() - 1, objList.get(objList.size() - 1));
             
